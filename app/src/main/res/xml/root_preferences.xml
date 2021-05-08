@@ -1,0 +1,11 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        android:id="@+id/my_service_enable"
+        app:key="screen_on"
+        app:persistent="false"
+        app:summary="Extend screen timeout while playing music"
+        app:title="Keep Screen On" />
+
+</PreferenceScreen>
