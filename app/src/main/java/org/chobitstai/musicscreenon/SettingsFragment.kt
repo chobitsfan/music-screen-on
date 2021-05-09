@@ -39,16 +39,20 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         return true
     }
 
-    //override fun onSaveInstanceState(outState: Bundle) {
-    //    super.onSaveInstanceState(outState)
-    //    outState.putBoolean("SERVICE_ENABLE", serviceEnable)
-    //}
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("service_enabled", serviceEnable)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //val enabled = savedInstanceState?.getBoolean("SERVICE_ENABLE", false)
         //val sp = view?.findViewById(R.id.my_service_enable) as SwitchPreference
-        activity?.intent?.getBooleanExtra("service_enabled",false)?.let { findPreference<SwitchPreferenceCompat>("screen_on")?.setChecked(it) }
+        if (savedInstanceState == null) {
+            activity?.intent?.getBooleanExtra("service_enabled", false)?.let { findPreference<SwitchPreferenceCompat>("screen_on")?.setChecked(it) }
+        } else {
+            savedInstanceState.getBoolean("service_enabled", false).let { findPreference<SwitchPreferenceCompat>("screen_on")?.setChecked(it) }
+        }
         //savedInstanceState?.getBoolean("SERVICE_ENABLE", false)?.let { findPreference<SwitchPreferenceCompat>("screen_on")?.setChecked(it) }
         //val ck = activity?.intent?.getBooleanExtra("service_enabled",false)
         //Log.d("MyApp", "onCreate $ck")

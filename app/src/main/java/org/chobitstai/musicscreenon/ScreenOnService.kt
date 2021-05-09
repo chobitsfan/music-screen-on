@@ -38,11 +38,11 @@ class ScreenOnService : Service() {
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, 0)
             }*/
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("service_enabled", true)
-        val pendingIntent =  PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT)
+        val myIntent = Intent(this, MainActivity::class.java)
+        myIntent.putExtra("service_enabled", true)
+        val pendingIntent =  PendingIntent.getActivity(this,0,myIntent,PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = Notification.Builder(this, "MyApp")
-            .setContentTitle("MyApp")
+            .setContentTitle("Extend screen timeout while playing music")
             //.setContentText(getText(R.string.notification_message))
             .setSmallIcon(R.drawable.outline_info_24)
             .setContentIntent(pendingIntent)
