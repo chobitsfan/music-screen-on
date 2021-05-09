@@ -6,16 +6,19 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.preference.Preference
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        supportFragmentManager
+        if (savedInstanceState == null) {
+            supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.settings_container, SettingsFragment())
+                .replace(R.id.settings, SettingsFragment())
                 .commit()
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -27,5 +30,8 @@ class MainActivity : AppCompatActivity() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+
+        //val ck = intent.getBooleanExtra("service_enabled",false)
+        //Log.d("MyApp", "activity onCreate $ck")
     }
 }

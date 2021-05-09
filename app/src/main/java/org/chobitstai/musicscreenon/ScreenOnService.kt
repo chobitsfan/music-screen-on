@@ -34,10 +34,13 @@ class ScreenOnService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val pendingIntent: PendingIntent =
+        /*val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, 0)
-            }
+            }*/
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("service_enabled", true)
+        val pendingIntent =  PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = Notification.Builder(this, "MyApp")
             .setContentTitle("MyApp")
             //.setContentText(getText(R.string.notification_message))
