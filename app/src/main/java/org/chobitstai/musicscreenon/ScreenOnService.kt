@@ -19,6 +19,9 @@ import java.util.*
 class ScreenOnService : Service() {
     private val timer = Timer()
     private var origScreenTimeout = 0
+    companion object {
+        var running = false
+    }
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -26,6 +29,7 @@ class ScreenOnService : Service() {
 
     override fun onDestroy() {
         Log.d("MusicScreenOn", "service destroy")
+        running = false
         timer.cancel()
         Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, origScreenTimeout)
         val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -38,6 +42,7 @@ class ScreenOnService : Service() {
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, 0)
             }*/
+        running = true
         val myIntent = Intent(this, MainActivity::class.java)
         myIntent.putExtra("service_enabled", true)
         val pendingIntent =  PendingIntent.getActivity(this,0,myIntent,PendingIntent.FLAG_UPDATE_CURRENT)
@@ -56,13 +61,13 @@ class ScreenOnService : Service() {
         origScreenTimeout = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
         timer.schedule(object : TimerTask() {
             val am : AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            var screen_timeout = 0
+            //var screen_timeout = 0
             var timeout_changed = false
             var music_stopped_count = 0
             override fun run() {
                 if (am.isMusicActive) {
                     if (!timeout_changed) {
-                        screen_timeout = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
+                        //screen_timeout = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
                         Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, 1000 * 60 * 10)
                         timeout_changed = true
                         music_stopped_count = 0
@@ -71,8 +76,10 @@ class ScreenOnService : Service() {
                     if (timeout_changed) {
                         music_stopped_count++
                         if (music_stopped_count > 2) {
-                            Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, screen_timeout)
-                            timeout_changed = false
+                            //Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, screen_timeout)
+                            //timeout_changed = false
+                            cancel()
+                            stopSelf()
                         }
                     }
                 }
