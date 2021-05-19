@@ -12,7 +12,6 @@ import androidx.preference.SwitchPreferenceCompat
 import kotlin.math.log
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
-    var serviceEnable = false
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         val pref:Preference? = findPreference("screen_on")
@@ -20,7 +19,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        serviceEnable = newValue as Boolean
+        val serviceEnable = newValue as Boolean
         if (serviceEnable) {
             //Toast.makeText(activity, "enable", Toast.LENGTH_SHORT).show()
             if (Settings.System.canWrite(activity)) {
@@ -44,6 +43,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         outState.putBoolean("service_enabled", serviceEnable)
     }*/
 
+    override fun onResume() {
+        super.onResume()
+        findPreference<SwitchPreferenceCompat>("screen_on")?.isChecked = ScreenOnService.running
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //val enabled = savedInstanceState?.getBoolean("SERVICE_ENABLE", false)
@@ -56,6 +60,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         //savedInstanceState?.getBoolean("SERVICE_ENABLE", false)?.let { findPreference<SwitchPreferenceCompat>("screen_on")?.setChecked(it) }
         //val ck = activity?.intent?.getBooleanExtra("service_enabled",false)
         //Log.d("MyApp", "onCreate $ck")
-        findPreference<SwitchPreferenceCompat>("screen_on")?.setChecked(ScreenOnService.running)
+        findPreference<SwitchPreferenceCompat>("screen_on")?.isChecked = ScreenOnService.running
     }
 }
