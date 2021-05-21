@@ -38,13 +38,8 @@ class ScreenOnService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        /*val pendingIntent: PendingIntent =
-            Intent(this, MainActivity::class.java).let { notificationIntent ->
-                PendingIntent.getActivity(this, 0, notificationIntent, 0)
-            }*/
         running = true
         val myIntent = Intent(this, MainActivity::class.java)
-        myIntent.putExtra("service_enabled", true)
         val pendingIntent =  PendingIntent.getActivity(this,0,myIntent,PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = Notification.Builder(this, "MyApp")
             .setContentTitle("Extend screen timeout while playing music")
@@ -59,32 +54,21 @@ class ScreenOnService : Service() {
         startForeground(10, notification)
 
         origScreenTimeout = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
+        Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, 1000 * 60 * 10)
+
         timer.schedule(object : TimerTask() {
             val am : AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            //var screen_timeout = 0
-            var timeout_changed = false
             var music_stopped_count = 0
             override fun run() {
-                if (am.isMusicActive) {
-                    if (!timeout_changed) {
-                        //screen_timeout = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
-                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, 1000 * 60 * 10)
-                        timeout_changed = true
-                        music_stopped_count = 0
-                    }
-                } else {
-                    if (timeout_changed) {
-                        music_stopped_count++
-                        if (music_stopped_count > 2) {
-                            //Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, screen_timeout)
-                            //timeout_changed = false
-                            cancel()
-                            stopSelf()
-                        }
+                if (!am.isMusicActive) {
+                    music_stopped_count++
+                    if (music_stopped_count > 2) {
+                        cancel()
+                        stopSelf()
                     }
                 }
             }
-        }, 10000, 10000)
+        }, 60000, 10000)
         return START_NOT_STICKY
     }
 }
